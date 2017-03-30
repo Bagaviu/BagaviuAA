@@ -1,6 +1,7 @@
 import pageRank.PageRankInterfce;
 import pageRank.model.PageRankModel;
 import scanner.ScannerInterface;
+import scanner.output.ScannerResult;
 import utils.Constants;
 
 import java.util.Collection;
@@ -23,36 +24,39 @@ public class MainClass {
 
         Scanner scanner = new Scanner(System.in);
         mUrl = scanner.nextLine();
+        String[] array = mUrl.split("\\s");
+        for (String value : array) {
+            System.out.println("your value: " + value);
+        }
         System.out.println("Start search, please wait...");
-        /*final String url = args[0];
+        final String url = array[0];
 
         if (args.length > 1) {
             IntStream.range(1, args.length)
-                    .mapToObj(i -> args[i])
+                    .mapToObj(i -> array[i])
                     .map(command -> command.split("="))
                     .forEach(command -> {
                         switch (command[0].toLowerCase()) {
-                            case Constants.CRAWLER_SPARSE :
-                                Constants.put(Constants.CRAWLER_SPARSE, Boolean.TRUE);
+                            case Constants.SCANNER_SPARSE:
+                                Constants.put(Constants.SCANNER_SPARSE, Boolean.TRUE);
                                 break;
-                            case Constants.CRAWLER_MAX_SIZE :
-                                Constants.put(Constants.CRAWLER_SPARSE, command[1]);
+                            case Constants.SCANNER_SIZE:
+                                Constants.put(Constants.SCANNER_SPARSE, command[1]);
                                 break;
-                            case Constants.CRAWLER_THREADS :
-                                Constants.put(Constants.CRAWLER_THREADS, command[1]);
+                            case Constants.SCANNER_THREAD:
+                                Constants.put(Constants.SCANNER_THREAD, command[1]);
                                 break;
-                            case Constants.PRC_THREADS :
-                                Constants.put(Constants.PRC_THREADS, command[1]);
+                            case Constants.PAGERANK_THREAD:
+                                Constants.put(Constants.PAGERANK_THREAD, command[1]);
                                 break;
                             default :
                                 throw new IllegalArgumentException("Not found argument " + command[0]);
                         }
                     });
         }
-*/
         final long start = System.currentTimeMillis();
-        System.out.println("StartTime " + start);
-        final Collection<PageRankModel> result = PageRankInterfce.newInstance().calculate(ScannerInterface.newInstance().work(mUrl));
+        System.out.println("\nStartTime " + start + "\n");
+        final Collection<PageRankModel> result = PageRankInterfce.newInstance().calculate(ScannerInterface.newInstance().work(url));
         System.out.println("getResults:");
         final long end = System.currentTimeMillis();
         result.forEach(r -> System.out.println(r.page + " : " + r.rank));

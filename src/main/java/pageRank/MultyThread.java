@@ -39,10 +39,10 @@ public class MultyThread extends AbstractPageRank implements PageRankInterfce {
                 final List<Worker> workers = result.allLinks().stream()
                         .map(l -> new Worker(prevRanksFinal, result, l, holder.getIndex(l)))
                         .collect(Collectors.toList());
-                final List<Future<PRCData>> futures = pool.invokeAll(workers);
-                for (Future<PRCData> future : futures) {
-                    final PRCData prcData = future.get();
-                    pageRanks[prcData.index] = prcData.rank;
+                final List<Future<PageRankData>> futures = pool.invokeAll(workers);
+                for (Future<PageRankData> future : futures) {
+                    final PageRankData pageRankData = future.get();
+                    pageRanks[pageRankData.index] = pageRankData.rank;
                 }
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -56,17 +56,17 @@ public class MultyThread extends AbstractPageRank implements PageRankInterfce {
                 .collect(Collectors.toList());
     }
 
-    private static class PRCData {
+    private static class PageRankData {
         final int index;
         final double rank;
 
-        private PRCData(int index, double rank) {
+        private PageRankData(int index, double rank) {
             this.index = index;
             this.rank = rank;
         }
     }
 
-    private static class Worker implements Callable<PRCData> {
+    private static class Worker implements Callable<PageRankData> {
 
         private final double[] prevRanks;
         private final ScannerResult crawlerResult;
@@ -82,13 +82,13 @@ public class MultyThread extends AbstractPageRank implements PageRankInterfce {
 
 
         @Override
-        public PRCData call() throws Exception {
+        public PageRankData call() throws Exception {
             final double[] newRank = {(1 - DAMPING_FACTOR) / crawlerResult.allLinks().size()};
             crawlerResult.out(page).forEach(in -> {
                 int out = crawlerResult.in(in).size();
                 newRank[0] += DAMPING_FACTOR * prevRanks[index] * 1D / (out == 0 ? 1 : out);
             });
-            return new PRCData(index, newRank[0]);
+            return new PageRankData(index, newRank[0]);
         }
     }
 }

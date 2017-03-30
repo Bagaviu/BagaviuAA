@@ -22,7 +22,7 @@ public interface ScannerInterface {
     ScannerResult work(String startUrl);
 
     static ScannerInterface newInstance() {
-        final String crawlerThreads = Constants.get(Constants.CRAWLER_THREADS);
+        final String crawlerThreads = Constants.get(Constants.SCANNER_THREAD);
         boolean useMulti = StringUtils.isNumeric(crawlerThreads) && Integer.valueOf(crawlerThreads) > 1;
         return useMulti ? new MultyThreadScanner(Integer.valueOf(crawlerThreads)) : new SingleThreadScanner();
     }

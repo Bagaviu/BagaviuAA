@@ -13,44 +13,46 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by Денис on 30.03.2017.
  */
 public class SparseMatrixOtput implements ScannerResult {
-    private final transient Map<String, Integer> indexMap;
-    private final AtomicInteger freeIndex = new AtomicInteger();
-    private final List<AtomicInteger> values;
-    private final List<Integer> rows;
-    private final List<Integer> cols;
-    private final int matrixSize;
+    private final transient Map<String, Integer> mMap;
+    private final AtomicInteger mFreeInt ;
+    private final List<AtomicInteger> mValues;
+    private final List<Integer> mRows;
+    private final List<Integer> mLines;
+    private final int mSize;
+    private Map<Integer, String> mReverse;
 
 
-    SparseMatrixOtput(int matrixSize) {
-        this.indexMap = new ConcurrentHashMap<>(matrixSize, 1F);
-        this.values = new CopyOnWriteArrayList<>();
-        this.rows = new CopyOnWriteArrayList<>();
-        this.cols = new CopyOnWriteArrayList<>();
-        this.matrixSize = matrixSize;
+    SparseMatrixOtput(int mSize) {
+        mFreeInt = new AtomicInteger();
+        this.mMap = new ConcurrentHashMap<>(mSize, 1F);
+        this.mValues = new CopyOnWriteArrayList<>();
+        this.mRows = new CopyOnWriteArrayList<>();
+        this.mLines = new CopyOnWriteArrayList<>();
+        this.mSize = mSize;
     }
 
     @Override
     public boolean addLink(String from, String to) {
-        if ((!indexMap.containsKey(from) || !indexMap.containsKey(to)) && freeIndex.get() >= matrixSize) {
+        if ((!mMap.containsKey(from) || !mMap.containsKey(to)) && mFreeInt.get() >= mSize) {
             return false;
         }
 
         final AtomicBoolean hasKeys = new AtomicBoolean(true);
 
-        final Integer fromIndex = indexMap.computeIfAbsent(from, k -> {
+        final int fromIndex = mMap.computeIfAbsent(from, k -> {
             hasKeys.set(false);
-            return freeIndex.getAndIncrement();
+            return mFreeInt.getAndIncrement();
         });
-        final Integer toIndex = indexMap.computeIfAbsent(to, k -> {
+        final int toIndex = mMap.computeIfAbsent(to, k -> {
             hasKeys.set(false);
-            return freeIndex.getAndIncrement();
+            return mFreeInt.getAndIncrement();
         });
 
         int findIndex = -1;
 
         if (hasKeys.get()) {
-            for (int i = 0; i < rows.size(); i++) {
-                if (rows.get(i).equals(fromIndex) && cols.get(i).equals(toIndex)) {
+            for (int i = 0; i < mRows.size(); i++) {
+                if (mRows.get(i).equals(fromIndex) && mLines.get(i).equals(toIndex)) {
                     findIndex = i;
                     break;
                 }
@@ -58,12 +60,12 @@ public class SparseMatrixOtput implements ScannerResult {
         }
 
         if (findIndex != -1) {
-            values.get(findIndex).incrementAndGet();
+            mValues.get(findIndex).incrementAndGet();
         } else {
             synchronized (this) { //there may be mistakes
-                rows.add(fromIndex);
-                cols.add(toIndex);
-                values.add(new AtomicInteger(1));
+                mRows.add(fromIndex);
+                mLines.add(toIndex);
+                mValues.add(new AtomicInteger(1));
             }
         }
 
@@ -72,16 +74,16 @@ public class SparseMatrixOtput implements ScannerResult {
 
     @Override
     public Collection<String> allLinks() {
-        return indexMap.keySet();
+        return mMap.keySet();
     }
 
     @Override
     public Collection<String> in(String page) {
-        final int col = indexMap.get(page);
+        final int col = mMap.get(page);
         final Collection<String> result = new ArrayList<>();
-        for (int i = 0; i < cols.size(); i++) {
-            if (col == cols.get(i)) {
-                result.add(reverse().get(rows.get(i)));
+        for (int i = 0; i < mLines.size(); i++) {
+            if (col == mLines.get(i)) {
+                result.add(reverse().get(mRows.get(i)));
             }
         }
         return result;
@@ -89,23 +91,26 @@ public class SparseMatrixOtput implements ScannerResult {
 
     @Override
     public Collection<String> out(String page) {
-        final int row = indexMap.get(page);
+        final int row = mMap.get(page);
         final Collection<String> result = new ArrayList<>();
-        for (int i = 0; i < rows.size(); i++) {
-            if (row == rows.get(i)) {
-                result.add(reverse().get(cols.get(i)));
+        for (int i = 0; i < mRows.size(); i++) {
+            if (row == mRows.get(i)) {
+                result.add(reverse().get(mLines.get(i)));
             }
         }
+        System.out.println("Matrix:");
+        for (String str : result) {
+            System.out.print(str + " ");
+        }
+        System.out.println();
         return result;
     }
 
-    private Map<Integer, String> reverse;
-
     private Map<Integer, String> reverse() {
-        if (reverse == null) {
-            reverse = new ConcurrentHashMap<>(matrixSize, 1F);
-            indexMap.forEach((k, v) -> reverse.put(v, k));
+        if (mReverse == null) {
+            mReverse = new ConcurrentHashMap<>(mSize, 1F);
+            mMap.forEach((k, v) -> mReverse.put(v, k));
         }
-        return reverse;
+        return mReverse;
     }
 }

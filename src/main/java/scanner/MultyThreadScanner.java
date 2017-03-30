@@ -14,17 +14,17 @@ import java.util.stream.Collectors;
  */
 public class MultyThreadScanner implements ScannerInterface{
 
-    private final ForkJoinPool service;
+    private final ForkJoinPool mService;
 
     MultyThreadScanner(int threadCount) {
-        service = new ForkJoinPool(threadCount);
+        mService = new ForkJoinPool(threadCount);
     }
 
     @Override
     public ScannerResult work(String startUrl) {
         final ScannerResult result = ScannerResult.newInstance();
-        service.invoke(new Worker(result, new ConcurrentHashMap<>(), startUrl));
-        service.shutdown();
+        mService.invoke(new Worker(result, new ConcurrentHashMap<>(), startUrl));
+        mService.shutdown();
         return result;
     }
 

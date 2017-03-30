@@ -22,7 +22,7 @@ public interface PageRankInterfce {
     Collection<PageRankModel> calculate(ScannerResult result);
 
     static PageRankInterfce newInstance() {
-        final String property = Constants.get(Constants.PRC_THREADS);
+        final String property = Constants.get(Constants.PAGERANK_THREAD);
         boolean useMulti = StringUtils.isNumeric(property) && Integer.valueOf(property) > 1;
         return useMulti ? new MultyThread(Integer.valueOf(property)) : new SingleThread();
     }
