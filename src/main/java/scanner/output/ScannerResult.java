@@ -3,6 +3,7 @@ package scanner.output;
 import org.apache.commons.lang3.StringUtils;
 import utils.Constants;
 
+import java.io.PrintWriter;
 import java.util.Collection;
 
 /**
@@ -36,6 +37,8 @@ public interface ScannerResult {
      * @return all links on this page
      */
     Collection<String> out(String page);
+
+    void printAsMatrix(PrintWriter printWriter);
 
     static ScannerResult newInstance() {
         final String maxSize = Constants.get(Constants.SCANNER_SIZE);

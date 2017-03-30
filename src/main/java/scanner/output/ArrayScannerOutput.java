@@ -2,10 +2,8 @@ package scanner.output;
 
 import utils.Holder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.io.PrintWriter;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,6 +18,19 @@ public class ArrayScannerOutput implements ScannerResult {
         this.mHolder = new Holder(matrixSize);
         this.mMatrix = new AtomicInteger[matrixSize][matrixSize];
         initMatrix();
+    }
+
+    @Override
+    public void printAsMatrix(PrintWriter printWriter) {
+        mHolder.ids().forEach(id -> printWriter.println(mHolder.getIndex(id) + " : " + id));
+        printWriter.println();
+        printWriter.flush();
+        for (AtomicInteger[] links : mMatrix) {
+            printWriter.println(Arrays.toString(links));
+            printWriter.flush();
+        }
+        printWriter.println();
+        printWriter.flush();
     }
 
     @Override

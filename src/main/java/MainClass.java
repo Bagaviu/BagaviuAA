@@ -4,7 +4,9 @@ import scanner.ScannerInterface;
 import scanner.output.ScannerResult;
 import utils.Constants;
 
+import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -55,11 +57,15 @@ public class MainClass {
                     });
         }
         final long start = System.currentTimeMillis();
-        System.out.println("\nStartTime " + start + "\n");
-        final Collection<PageRankModel> result = PageRankInterfce.newInstance().calculate(ScannerInterface.newInstance().work(url));
-        System.out.println("getResults:");
+        final ScannerResult crawlerResult = ScannerInterface.newInstance().work(url);
+        final Collection<PageRankModel> result = PageRankInterfce.newInstance().calculate(crawlerResult);
         final long end = System.currentTimeMillis();
-        result.forEach(r -> System.out.println(r.page + " : " + r.rank));
-        System.out.println("\nTime of calculate " + (end - start) + "ms");
+
+        System.out.println("---CRAWLER RESULT---");
+        crawlerResult.printAsMatrix(new PrintWriter(System.out));
+        System.out.println("---PAGE RANKS---");
+        result.stream().sorted(Comparator.comparing(PageRankModel::rank))
+                .forEach(r -> System.out.println(r.page + " : " + r.rank));
+        System.out.println("\n time of calculate " + (end - start) + "ms");
     }
 }

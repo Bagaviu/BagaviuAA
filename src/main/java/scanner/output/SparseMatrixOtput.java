@@ -1,9 +1,7 @@
 package scanner.output;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.io.PrintWriter;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -98,12 +96,25 @@ public class SparseMatrixOtput implements ScannerResult {
                 result.add(reverse().get(mLines.get(i)));
             }
         }
-        System.out.println("Matrix:");
-        for (String str : result) {
-            System.out.print(str + " ");
-        }
-        System.out.println();
         return result;
+    }
+
+    @Override
+    public void printAsMatrix(PrintWriter printWriter) {
+        mMap.forEach((k, v) -> printWriter.println(v + " : " + k));
+        printWriter.println();
+
+        int[][] matrix = new int[mSize][mSize];
+
+        for (int i = 0; i < mValues.size(); i++) {
+            matrix[mRows.get(i)][mLines.get(i)] = mValues.get(i).intValue();
+        }
+
+        for (int[] links : matrix) {
+            printWriter.println(Arrays.toString(links));
+        }
+
+        printWriter.println();
     }
 
     private Map<Integer, String> reverse() {

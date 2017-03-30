@@ -12,4 +12,12 @@ public class PageRankModel {
         this.page = page;
         this.rank = rank;
     }
+
+    public String page() {
+        return page;
+    }
+
+    public double rank() {
+        return rank;
+    }
 }
