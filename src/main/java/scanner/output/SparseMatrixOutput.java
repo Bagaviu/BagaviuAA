@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by Денис on 30.03.2017.
  */
-public class SparseMatrixOtput implements ScannerResult {
+public class SparseMatrixOutput implements ScannerResult {
     private final transient Map<String, Integer> mMap;
     private final AtomicInteger mFreeInt ;
     private final List<AtomicInteger> mValues;
@@ -20,7 +20,7 @@ public class SparseMatrixOtput implements ScannerResult {
     private Map<Integer, String> mReverse;
 
 
-    SparseMatrixOtput(int mSize) {
+    SparseMatrixOutput(int mSize) {
         mFreeInt = new AtomicInteger();
         this.mMap = new ConcurrentHashMap<>(mSize, 1F);
         this.mValues = new CopyOnWriteArrayList<>();

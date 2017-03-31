@@ -18,10 +18,9 @@ import java.util.stream.Collectors;
  */
 public class MultyThread extends AbstractPageRank implements PageRankInterfce {
 
-
     private final ExecutorService pool;
 
-    public MultyThread(int threadCount) {
+    MultyThread(int threadCount) {
         this.pool = Executors.newFixedThreadPool(threadCount);
     }
 
@@ -69,13 +68,13 @@ public class MultyThread extends AbstractPageRank implements PageRankInterfce {
     private static class Worker implements Callable<PageRankData> {
 
         private final double[] prevRanks;
-        private final ScannerResult crawlerResult;
+        private final ScannerResult scannerResult;
         private final String page;
         private final int index;
 
-        private Worker(double[] prevRanks, ScannerResult crawlerResult, String page, int index) {
+        private Worker(double[] prevRanks, ScannerResult scannerResult, String page, int index) {
             this.prevRanks = prevRanks;
-            this.crawlerResult = crawlerResult;
+            this.scannerResult = scannerResult;
             this.page = page;
             this.index = index;
         }
@@ -83,12 +82,13 @@ public class MultyThread extends AbstractPageRank implements PageRankInterfce {
 
         @Override
         public PageRankData call() throws Exception {
-            final double[] newRank = {(1 - DAMPING_FACTOR) / crawlerResult.allLinks().size()};
-            crawlerResult.out(page).forEach(in -> {
-                int out = crawlerResult.in(in).size();
+            final double[] newRank = {(1 - DAMPING_FACTOR) / scannerResult.allLinks().size()};
+            scannerResult.out(page).forEach(in -> {
+                int out = scannerResult.in(in).size();
                 newRank[0] += DAMPING_FACTOR * prevRanks[index] * 1D / (out == 0 ? 1 : out);
             });
             return new PageRankData(index, newRank[0]);
         }
     }
+
 }

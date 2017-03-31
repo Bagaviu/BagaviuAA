@@ -44,6 +44,6 @@ public interface ScannerResult {
         final String maxSize = Constants.get(Constants.SCANNER_SIZE);
         boolean useSparse = !StringUtils.isEmpty(Constants.get(Constants.SCANNER_SPARSE));
         final int size = StringUtils.isNumeric(maxSize) ? Integer.valueOf(maxSize) : DEFAULT_SIZE;
-        return useSparse ? new SparseMatrixOtput(size) : new ArrayScannerOutput(size);
+        return useSparse ? new SparseMatrixOutput(size) : new ArrayScannerOutput(size);
     }
 }

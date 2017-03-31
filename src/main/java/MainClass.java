@@ -15,30 +15,36 @@ import java.util.stream.IntStream;
  */
 public class MainClass {
 
-    private static String mUrl = "http://www.akbars.ru/";
+    private static String mUrl = "http://www.google.com/";
 
 
     public static void main(String[] args) {
+        System.out.println("For help you can write: -help");
         System.out.println("Write your url:");
-        /*if (args.length == 0) {
-            System.err.println("Not found start site");
-        }*/
 
         Scanner scanner = new Scanner(System.in);
         mUrl = scanner.nextLine();
+        if (mUrl.contains("-help")) {
+            getHelp();
+        }else {
+            getResults();
+        }
+    }
+
+    private static void getResults() {
         String[] array = mUrl.split("\\s");
         for (String value : array) {
             System.out.println("your value: " + value);
         }
-        System.out.println("Start search, please wait...");
+        System.out.println("Start search, please wait...\n");
         final String url = array[0];
 
-        if (args.length > 1) {
-            IntStream.range(1, args.length)
+        if (array.length > 1) {
+            IntStream.range(1, array.length)
                     .mapToObj(i -> array[i])
                     .map(command -> command.split("="))
                     .forEach(command -> {
-                        switch (command[0].toLowerCase()) {
+                        switch (command[0]) {
                             case Constants.SCANNER_SPARSE:
                                 Constants.put(Constants.SCANNER_SPARSE, Boolean.TRUE);
                                 break;
@@ -51,21 +57,36 @@ public class MainClass {
                             case Constants.PAGERANK_THREAD:
                                 Constants.put(Constants.PAGERANK_THREAD, command[1]);
                                 break;
-                            default :
+                            default:
                                 throw new IllegalArgumentException("Not found argument " + command[0]);
                         }
                     });
         }
         final long start = System.currentTimeMillis();
-        final ScannerResult crawlerResult = ScannerInterface.newInstance().work(url);
-        final Collection<PageRankModel> result = PageRankInterfce.newInstance().calculate(crawlerResult);
+        final ScannerResult scannerResult = ScannerInterface.newInstance().work(url);
+        final Collection<PageRankModel> result = PageRankInterfce.newInstance().calculate(scannerResult);
         final long end = System.currentTimeMillis();
+        showResults(start, scannerResult, result, end);
+    }
 
-        System.out.println("---CRAWLER RESULT---");
-        crawlerResult.printAsMatrix(new PrintWriter(System.out));
-        System.out.println("---PAGE RANKS---");
+    private static void showResults(long start, ScannerResult scannerResult, Collection<PageRankModel> result, long end) {
+        System.out.println("////////////////////////////////////////MATRIX RESULT////////////////////////////////////////\n");
+        scannerResult.printAsMatrix(new PrintWriter(System.out));
+        System.out.println("\n////////////////////////////////////////PAGE RANK////////////////////////////////////////\n");
         result.stream().sorted(Comparator.comparing(PageRankModel::rank))
                 .forEach(r -> System.out.println(r.page + " : " + r.rank));
         System.out.println("\n time of calculate " + (end - start) + "ms");
+    }
+
+    private static void getHelp() {
+        System.out.println("///////////////////////////////////////HELP////////////////////////////////////////////////\n");
+        System.out.println("Необходимые команды:");
+        System.out.println("scT - Scanner threads (default 1)\n" +
+                "scS - Scanner size (default 100)\n" +
+                "c-sparse - use Scanner based on sparsed matrix\n" +
+                "prT - PageRank threads (default 1)\n");
+        Scanner sc = new Scanner(System.in);
+        mUrl = sc.nextLine();
+        getResults();
     }
 }
