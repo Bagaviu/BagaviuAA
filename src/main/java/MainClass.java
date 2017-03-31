@@ -83,7 +83,7 @@ public class MainClass {
         System.out.println("Необходимые команды:");
         System.out.println("scT - Scanner threads (default 1)\n" +
                 "scS - Scanner size (default 100)\n" +
-                "c-sparse - use Scanner based on sparsed matrix\n" +
+                "s-sparse - use Scanner based on sparsed matrix\n" +
                 "prT - PageRank threads (default 1)\n");
         Scanner sc = new Scanner(System.in);
         mUrl = sc.nextLine();

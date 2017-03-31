@@ -10,7 +10,7 @@ public class Constants {
 
     public final static String SCANNER_THREAD = "scT";
     public final static String SCANNER_SIZE = "scS";
-    public final static String SCANNER_SPARSE = "c-sparse";
+    public final static String SCANNER_SPARSE = "s-sparse";
     public final static String PAGERANK_THREAD = "prT";
 
     private final static Map<String, String> values = new ConcurrentHashMap<>();
