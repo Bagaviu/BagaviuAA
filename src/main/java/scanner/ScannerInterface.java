@@ -8,12 +8,15 @@ import utils.Constants;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static utils.Constants.ANCHOR;
+import static utils.Constants.SCANNER_THREAD;
+
 /**
  * Created by Денис on 30.03.2017.
  */
 public interface ScannerInterface {
 
-    String ANCHOR = "#";
+
 
     /**
      * @param startUrl where to start
@@ -22,7 +25,7 @@ public interface ScannerInterface {
     ScannerResult work(String startUrl);
 
     static ScannerInterface newInstance() {
-        final String crawlerThreads = Constants.get(Constants.SCANNER_THREAD);
+        final String crawlerThreads = Constants.get(SCANNER_THREAD);
         boolean useMulti = StringUtils.isNumeric(crawlerThreads) && Integer.valueOf(crawlerThreads) > 1;
         return useMulti ? new MultyThreadScanner(Integer.valueOf(crawlerThreads)) : new SingleThreadScanner();
     }

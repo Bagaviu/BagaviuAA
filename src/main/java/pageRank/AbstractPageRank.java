@@ -6,7 +6,7 @@ import org.apache.commons.math3.linear.RealVector;
 /**
  * Created by Денис on 30.03.2017.
  */
-abstract class AbstractPageRank implements PageRankInterfce {
+abstract class AbstractPageRank implements PageRankInterface {
 
     double[] normalize(double[] ranks) {
         final RealVector realVector = MatrixUtils.createRealVector(ranks);

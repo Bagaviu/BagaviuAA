@@ -71,12 +71,12 @@ public class SparseMatrixOutput implements ScannerResult {
     }
 
     @Override
-    public Collection<String> allLinks() {
+    public Collection<String> getAllLinks() {
         return mMap.keySet();
     }
 
     @Override
-    public Collection<String> in(String page) {
+    public Collection<String> setInLinks(String page) {
         final int col = mMap.get(page);
         final Collection<String> result = new ArrayList<>();
         for (int i = 0; i < mLines.size(); i++) {
@@ -88,7 +88,7 @@ public class SparseMatrixOutput implements ScannerResult {
     }
 
     @Override
-    public Collection<String> out(String page) {
+    public Collection<String> setOutLinks(String page) {
         final int row = mMap.get(page);
         final Collection<String> result = new ArrayList<>();
         for (int i = 0; i < mRows.size(); i++) {

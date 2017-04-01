@@ -46,12 +46,12 @@ public class ArrayScannerOutput implements ScannerResult {
     }
 
     @Override
-    public Collection<String> allLinks() {
+    public Collection<String> getAllLinks() {
         return mHolder.ids();
     }
 
     @Override
-    public Collection<String> in(String page) {
+    public Collection<String> setInLinks(String page) {
         if (mReverse == null) {
             mReverse = mHolder.reverse();
         }
@@ -69,7 +69,7 @@ public class ArrayScannerOutput implements ScannerResult {
     }
 
     @Override
-    public Collection<String> out(String page) {
+    public Collection<String> setOutLinks(String page) {
         if (mReverse == null) {
             mReverse = mHolder.reverse();
         }

@@ -13,11 +13,7 @@ public class PageRankModel {
         this.rank = rank;
     }
 
-    public String page() {
-        return page;
-    }
-
-    public double rank() {
+    public double getRank() {
         return rank;
     }
 }

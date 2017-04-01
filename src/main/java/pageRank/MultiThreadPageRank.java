@@ -1,5 +1,6 @@
 package pageRank;
 
+import pageRank.model.PageRankData;
 import pageRank.model.PageRankModel;
 import scanner.output.ScannerResult;
 import utils.Holder;
@@ -16,17 +17,17 @@ import java.util.stream.Collectors;
 /**
  * Created by Денис on 30.03.2017.
  */
-public class MultyThread extends AbstractPageRank implements PageRankInterfce {
+public class MultiThreadPageRank extends AbstractPageRank implements PageRankInterface {
 
     private final ExecutorService pool;
 
-    MultyThread(int threadCount) {
+    MultiThreadPageRank(int threadCount) {
         this.pool = Executors.newFixedThreadPool(threadCount);
     }
 
     @Override
     public Collection<PageRankModel> calculate(ScannerResult result) {
-        final int size = result.allLinks().size();
+        final int size = result.getAllLinks().size();
         double[] pageRanks = init(size);
         final Holder holder = new Holder(size);
         double[] prevRanks;
@@ -35,7 +36,7 @@ public class MultyThread extends AbstractPageRank implements PageRankInterfce {
             prevRanks = Arrays.copyOf(pageRanks, pageRanks.length);
             final double[] prevRanksFinal = prevRanks;
             try {
-                final List<Worker> workers = result.allLinks().stream()
+                final List<Worker> workers = result.getAllLinks().stream()
                         .map(l -> new Worker(prevRanksFinal, result, l, holder.getIndex(l)))
                         .collect(Collectors.toList());
                 final List<Future<PageRankData>> futures = pool.invokeAll(workers);
@@ -55,16 +56,6 @@ public class MultyThread extends AbstractPageRank implements PageRankInterfce {
                 .collect(Collectors.toList());
     }
 
-    private static class PageRankData {
-        final int index;
-        final double rank;
-
-        private PageRankData(int index, double rank) {
-            this.index = index;
-            this.rank = rank;
-        }
-    }
-
     private static class Worker implements Callable<PageRankData> {
 
         private final double[] prevRanks;
@@ -82,9 +73,9 @@ public class MultyThread extends AbstractPageRank implements PageRankInterfce {
 
         @Override
         public PageRankData call() throws Exception {
-            final double[] newRank = {(1 - DAMPING_FACTOR) / scannerResult.allLinks().size()};
-            scannerResult.out(page).forEach(in -> {
-                int out = scannerResult.in(in).size();
+            final double[] newRank = {(1 - DAMPING_FACTOR) / scannerResult.getAllLinks().size()};
+            scannerResult.setOutLinks(page).forEach(in -> {
+                int out = scannerResult.setInLinks(in).size();
                 newRank[0] += DAMPING_FACTOR * prevRanks[index] * 1D / (out == 0 ? 1 : out);
             });
             return new PageRankData(index, newRank[0]);

@@ -1,4 +1,4 @@
-import pageRank.PageRankInterfce;
+import pageRank.PageRankInterface;
 import pageRank.model.PageRankModel;
 import scanner.ScannerInterface;
 import scanner.output.ScannerResult;
@@ -64,7 +64,7 @@ public class MainClass {
         }
         final long start = System.currentTimeMillis();
         final ScannerResult scannerResult = ScannerInterface.newInstance().work(url);
-        final Collection<PageRankModel> result = PageRankInterfce.newInstance().calculate(scannerResult);
+        final Collection<PageRankModel> result = PageRankInterface.newInstance().calculate(scannerResult);
         final long end = System.currentTimeMillis();
         showResults(start, scannerResult, result, end);
     }
@@ -73,7 +73,7 @@ public class MainClass {
         System.out.println("////////////////////////////////////////MATRIX RESULT////////////////////////////////////////\n");
         scannerResult.printAsMatrix(new PrintWriter(System.out));
         System.out.println("\n////////////////////////////////////////PAGE RANK////////////////////////////////////////\n");
-        result.stream().sorted(Comparator.comparing(PageRankModel::rank))
+        result.stream().sorted(Comparator.comparing(PageRankModel::getRank))
                 .forEach(r -> System.out.println(r.page + " : " + r.rank));
         System.out.println("\n time of calculate " + (end - start) + "ms");
     }

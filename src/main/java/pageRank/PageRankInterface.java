@@ -10,7 +10,7 @@ import java.util.Collection;
 /**
  * Created by Денис on 30.03.2017.
  */
-public interface PageRankInterfce {
+public interface PageRankInterface {
 
     double DAMPING_FACTOR = 0.85;
     double EPS = 0.000001;
@@ -21,9 +21,9 @@ public interface PageRankInterfce {
      */
     Collection<PageRankModel> calculate(ScannerResult result);
 
-    static PageRankInterfce newInstance() {
+    static PageRankInterface newInstance() {
         final String property = Constants.get(Constants.PAGERANK_THREAD);
         boolean useMulti = StringUtils.isNumeric(property) && Integer.valueOf(property) > 1;
-        return useMulti ? new MultyThread(Integer.valueOf(property)) : new SingleThread();
+        return useMulti ? new MultiThreadPageRank(Integer.valueOf(property)) : new SingleThreadPageRank();
     }
 }

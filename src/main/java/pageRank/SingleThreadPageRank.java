@@ -11,23 +11,23 @@ import java.util.stream.Collectors;
 /**
  * Created by Денис on 30.03.2017.
  */
-public class SingleThread extends AbstractPageRank implements PageRankInterfce {
+public class SingleThreadPageRank extends AbstractPageRank implements PageRankInterface {
 
 
     @Override
     public Collection<PageRankModel> calculate(ScannerResult result) {
-        final int size = result.allLinks().size();
+        final int size = result.getAllLinks().size();
         double[] pageRanks = init(size);
         final Holder holder = new Holder(size);
         double[] prevRanks;
         do {
             prevRanks = Arrays.copyOf(pageRanks, pageRanks.length);
             final double[] finalPrevRanks = prevRanks;
-            for (String link : result.allLinks()) {
+            for (String link : result.getAllLinks()) {
                 final double[] newRank = new double[]{(1 - DAMPING_FACTOR) / size};
                 final int index = holder.getIndex(link);
-                result.out(link).forEach(out -> {
-                    int in = result.in(out).size();
+                result.setOutLinks(link).forEach(out -> {
+                    int in = result.setInLinks(out).size();
                     newRank[0] += DAMPING_FACTOR * finalPrevRanks[index] * 1D / (in == 0 ? 1 : in);
                 });
                 pageRanks[index] = newRank[0];
